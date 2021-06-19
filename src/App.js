@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import './index.css'
 import SummaryCard from './SummaryCard'
 import StateWiseTable from './StateWiseTable'
 
@@ -20,22 +21,35 @@ function App() {
     fethData()
   }, [])
 
-  const { data, lastRefreshed, lastOriginUpdate } = covidData
+  const { data, lastOriginUpdate } = covidData
 
-  console.log(data)
+  const dateTime = new Date(lastOriginUpdate)
+    .toLocaleString('en-US', {
+      hour12: true,
+    })
+    .split(',')
 
   if (loading) {
-    return <h1>Loading...</h1>
+    return (
+      <div className='d-flex justify-content-center my-5 text-primary'>
+        <div className='spinner-border width-height' role='status'></div>
+      </div>
+    )
   }
 
   return (
-    <div>
-      <div>
-        Last Updated : {new Date(lastOriginUpdate).toLocaleDateString()}
+    <div className='container-md text-center'>
+      <div className='container-fluid justify-content-center bg-secondary text-white display-6 my-2 p-2 rounded-3'>
+        Last Updated : {`${dateTime[0]} @ ${dateTime[1]}`}
       </div>
+
       <div>{data && data.summary && <SummaryCard data={data.summary} />}</div>
 
       {data && data.regional && <StateWiseTable data={data.regional} />}
+
+      <div className='bg-secondary text-white rounded-3 my-2 p-2'>
+        <h1>#StayHomeStaySafe</h1>
+      </div>
     </div>
   )
 }

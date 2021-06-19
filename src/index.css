@@ -3,3 +3,13 @@
   margin: 0;
   box-sizing: border-box;
 }
+
+nav ul li p:hover {
+  cursor: pointer;
+}
+
+.width-height {
+  text-align: center !important;
+  width: 5rem;
+  height: 5rem;
+}
