@@ -7,6 +7,7 @@ import StateWiseTable from './StateWiseTable'
 function App() {
   const [covidData, setCovidData] = useState([])
   const [loading, setLoading] = useState(false)
+  const [query, setQuery] = useState('')
 
   useEffect(() => {
     setLoading(true)
@@ -29,6 +30,10 @@ function App() {
     })
     .split(',')
 
+  const filterQuery = (items) => {
+    return items.filter((item) => item.loc.toLowerCase().indexOf(query) > -1)
+  }
+
   if (loading) {
     return (
       <div className='d-flex justify-content-center my-5 text-primary'>
@@ -45,7 +50,22 @@ function App() {
 
       <div>{data && data.summary && <SummaryCard data={data.summary} />}</div>
 
-      {data && data.regional && <StateWiseTable data={data.regional} />}
+      <div className='p-3 m-auto d-flex justify-content-center'>
+        <input
+          className='form-control input-lg '
+          type='text'
+          placeholder="Search by state name e.g 'tamilnadu'"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+      </div>
+
+      {data && data.regional && (
+        <StateWiseTable
+          data={filterQuery(data.regional)}
+          queryKeyword={query}
+        />
+      )}
 
       <div className='bg-secondary text-white rounded-3 my-2 p-2'>
         <h1>#StayHomeStaySafe</h1>

@@ -13,3 +13,7 @@ nav ul li p:hover {
   width: 5rem;
   height: 5rem;
 }
+
+.form-control {
+  max-width: 500px;
+}

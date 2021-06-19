@@ -1,12 +1,10 @@
 import React, { useState } from 'react'
 import _ from 'lodash'
 
-const StateWiseTable = ({ data }) => {
+const StateWiseTable = ({ data, queryKeyword }) => {
   const [currentPage, setCurrentPage] = useState(1)
   const [startIndex, setStartIndex] = useState(0)
   const [pageSize, setPageSize] = useState(10)
-
-  // console.log(paginatedData)
 
   const convertToNumberFormat = (data) => {
     let result = data.map((state) => ({
@@ -40,6 +38,14 @@ const StateWiseTable = ({ data }) => {
     const startIndex = (pageNo - 1) * 10
     setStartIndex(startIndex)
     setPageSize(pageNo * 10)
+  }
+
+  if (data.length === 0) {
+    return (
+      <div>
+        <h2>No matches found with "{queryKeyword}"</h2>
+      </div>
+    )
   }
 
   return (
