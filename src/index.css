@@ -17,3 +17,11 @@ nav ul li p:hover {
 .form-control {
   max-width: 500px;
 }
+
+i {
+  cursor: pointer;
+}
+
+i:active {
+  color: dodgerblue;
+}

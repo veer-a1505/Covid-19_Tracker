@@ -3,9 +3,12 @@ import axios from 'axios'
 import './index.css'
 import SummaryCard from './SummaryCard'
 import StateWiseTable from './StateWiseTable'
+import { renameObjectProperty } from './utils'
 
 function App() {
   const [covidData, setCovidData] = useState([])
+  const [updatedTime, setUpdatedTime] = useState({})
+  const [summary, setSummary] = useState({})
   const [loading, setLoading] = useState(false)
   const [query, setQuery] = useState('')
 
@@ -15,23 +18,34 @@ function App() {
       const { data } = await axios.get(
         'https://api.rootnet.in/covid19-in/stats/latest'
       )
-      setCovidData(data)
+
+      setUpdatedTime(data.lastOriginUpdate)
+      setSummary(data.data.summary)
+      setCovidData(renameObjectProperty(data.data.regional))
       setLoading(false)
     }
 
     fethData()
   }, [])
 
-  const { data, lastOriginUpdate } = covidData
-
-  const dateTime = new Date(lastOriginUpdate)
+  const dateTime = new Date(updatedTime)
     .toLocaleString('en-US', {
       hour12: true,
     })
     .split(',')
 
   const filterQuery = (items) => {
-    return items.filter((item) => item.loc.toLowerCase().indexOf(query) > -1)
+    return items.filter((item) => item.state.toLowerCase().indexOf(query) > -1)
+  }
+
+  const filterByAsc = (items, sortBy) => {
+    let result = items.sort((a, b) => a[sortBy] - b[sortBy])
+    setCovidData([...result])
+  }
+
+  const filterByDsc = (items, sortBy) => {
+    let result = items.sort((a, b) => b[sortBy] - a[sortBy])
+    setCovidData([...result])
   }
 
   if (loading) {
@@ -48,22 +62,25 @@ function App() {
         Last Updated : {`${dateTime[0]} @ ${dateTime[1]}`}
       </div>
 
-      <div>{data && data.summary && <SummaryCard data={data.summary} />}</div>
+      <div>{summary && <SummaryCard data={summary} />}</div>
 
       <div className='p-3 m-auto d-flex justify-content-center'>
         <input
           className='form-control input-lg '
           type='text'
-          placeholder="Search by state name e.g 'tamilnadu'"
+          placeholder="Search by state e.g 'tamilnadu'"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
       </div>
 
-      {data && data.regional && (
+      {covidData && (
         <StateWiseTable
-          data={filterQuery(data.regional)}
+          data={filterQuery(covidData)}
           queryKeyword={query}
+          filterByAce={filterByAsc}
+          filterByDce={filterByDsc}
+          rawData={covidData}
         />
       )}
 
